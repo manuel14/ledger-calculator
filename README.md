@@ -254,5 +254,5 @@ provided in the design requirements above.
 
 ## Submission
 
-You can provide your codebase in the form of a GitHub or GitLab repo and email the link to john.turner@getampla.com and 
+You can provide your codebase in the form of a GitHub or GitLab repo and email the link to sagar.patel@getampla.com and 
 jie.zhou@getampla.com 
