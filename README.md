@@ -235,14 +235,3 @@ Balance Applicable to Future Advances:                0.00
 $ python cli.py drop-db
 Deleted SQLite database at db.sqlite3
 ```
-
-## Overall Criteria
-
-Your work will be judged on:
-
-- The structure and quality of your code
-- The ability for your code to achieve the functionality described above
-- The accuracy of your code against the unit test cases provided
-
-To be respectful of your time, you will not receive additional credit for implementing additional functionality not
-provided in the design requirements above.
