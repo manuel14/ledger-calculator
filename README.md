@@ -1,14 +1,12 @@
-# Ampla Engineering Take-home Exercise
-
 ## Loan Ledger
 
 As part of your new role at Working Capital you are asked to continue the work that another engineer has started for
 the creation of a ledger calculator for a revolving line of credit. She left some documentation that you can find at the
 bottom of this document. Please read this spec in its entirety to ensure no details are missed.
 
-Working Capital offers *advances* (loans) to business customers at a fixed interest rate but without a fixed payment
-schedule. Each advance is like a mini-loan with its own running ledgers of "*advance balance*" (the amount of the
-advance that has yet to be repaid). Advances are paid off by the customer by means of *payments*. An advance doesn't
+Working Capital offers _advances_ (loans) to business customers at a fixed interest rate but without a fixed payment
+schedule. Each advance is like a mini-loan with its own running ledgers of "_advance balance_" (the amount of the
+advance that has yet to be repaid). Advances are paid off by the customer by means of _payments_. An advance doesn't
 need to be paid off before a new advance is requested, so a customer can have multiple active advances (advances that
 are not yet paid off) at the same time.
 
@@ -29,13 +27,14 @@ All events (advances and payments) in the CSV file are in sequential order.
 
 ## Boilerplate Command Line Interface
 
-The ledger system has a CLI which supports the following commands: 
+The ledger system has a CLI which supports the following commands:
 
 - a `create-db` command to initialize the sqlite database
 - a `drop-db` command to delete the database
 - a `load` command to load a csv file that contains advance and payment events
 
 ### Your Task
+
 Your task for this project is to implement the `balances` command.
 You may add as many additional methods and data structures as you want,
 but make sure the solution is in the placeholder text marked `FIXME`
@@ -43,44 +42,44 @@ in `cli.py` (in other words, that except for the placeholder, existing
 code does not change).
 
 The `balances` command should:
- - Optionally take in `end_date` (YYYY-MM-DD) as command argument for calculations
 
+- Optionally take in `end_date` (YYYY-MM-DD) as command argument for calculations
 
- - Output a table containing the following information for each and every advance (all as of `end_date` if supplied, today's date otherwise):
-   - the advance index identifier
-   - creation date
-   - original advance amount
-   - current advance balance: how much still needs to be repaid
+- Output a table containing the following information for each and every advance (all as of `end_date` if supplied, today's date otherwise):
 
+  - the advance index identifier
+  - creation date
+  - original advance amount
+  - current advance balance: how much still needs to be repaid
 
- - Output Summary statistics (all as of `end_date` if supplied, today's date otherwise):
-   - the sum of advance balances across all advances
-   - the total *interest payable balance*
-   - the total of *interest paid*
-   - the total amount of accrued payments applicable to future advances
+- Output Summary statistics (all as of `end_date` if supplied, today's date otherwise):
+  - the sum of advance balances across all advances
+  - the total _interest payable balance_
+  - the total of _interest paid_
+  - the total amount of accrued payments applicable to future advances
 
-##### *Additional Requirements / Notes*
+##### _Additional Requirements / Notes_
 
 - Your output for `balances` needs to match the format below exactly as shown (see examples below).
-    - **Format Specification**:
-        - `Identifier` should be right justified with 10 spaces.
-        - `Date` should be right justified with 11 spaces after `Identifier`.
-        - `Initial Amt` should be right justified with 17 spaces after `Date` rounded to the nearest hundredths place.
-        - `Current Balance` should be right justified with 20 spaces after `Initial Amt` and rounded to the nearest hundredths place.
-    - See `click.echo()` examples in the starter code on how to right justify your output, and to round to two decimal places.
+  - **Format Specification**:
+    - `Identifier` should be right justified with 10 spaces.
+    - `Date` should be right justified with 11 spaces after `Identifier`.
+    - `Initial Amt` should be right justified with 17 spaces after `Date` rounded to the nearest hundredths place.
+    - `Current Balance` should be right justified with 20 spaces after `Initial Amt` and rounded to the nearest hundredths place.
+  - See `click.echo()` examples in the starter code on how to right justify your output, and to round to two decimal places.
 - Your solution may not change the function signature of `balances`.
 - Your output will be compared against a suite of correct output files, see `tests/test*.correct.txt`
 - You do not need to support changes to events after they have been loaded.
 - You may not use any libraries related to loans, spreadsheets, or accounting.
 - Your solution should support
-    - large number of events (1M+)
-    - fast response for the balances even when there is a large number of events in the database
+  - large number of events (1M+)
+  - fast response for the balances even when there is a large number of events in the database
 
 #### Interest Calculations
 
 Each customer has an "interest payable balance" (the amount of interest that has accrued and has yet to be paid). The interest accrued each day is based on the following formula:
 
-"*daily accrued interest"* = 0.00035 x "*the sum of all advance balances*"
+"_daily accrued interest"_ = 0.00035 x "_the sum of all advance balances_"
 
 For example, if there are two open advances:
 
@@ -107,14 +106,15 @@ So on `2021-01-08`, the interest payable balance would be $560.00, this table is
 
 Anytime a payment is received, it is applied in the following manner:
 
-1. First, to reduce the "*interest payable balance*" for the customer (talked about above), if any,
-2. Second, any remaining amount of the repayment is applied to reduce the "advance balance" of the *oldest* active
+1. First, to reduce the "_interest payable balance_" for the customer (talked about above), if any,
+2. Second, any remaining amount of the repayment is applied to reduce the "advance balance" of the _oldest_ active
    advance, and if there is any remaining amount it reduces the amount of the following (second oldest) advance, and so
    on,
-3. Finally - after *all* advances have been repaid - if there is still some amount of the repayment available, the remaining
+3. Finally - after _all_ advances have been repaid - if there is still some amount of the repayment available, the remaining
    amount of the repayment should be credited towards to immediately paying down future advances, when they are made.
 
 ## Setup Instructions
+
 Below is the code's current documentation. Please feel free to update and extend it when submitting your codebase!
 
 ### Running the code
@@ -124,14 +124,8 @@ Below is the code's current documentation. Please feel free to update and extend
 The only system requirement is `sqlite3`, all other python requirements will be installed via `pip`. The only python
 requirements are `click` and it's dependencies.
 
-#### Python Environment Installation
-
-1. Clone the repo: `git clone git@github.com:Gourmet-Growth/ampla-ledger-takehome.git` and make a new virtual
-   environment within the repo using: `cd ampla-ledger-takehome; python3 -m venv env`
-2. Activate the environment: `source env/bin/activate`
-3. Upgrade pip and install requirements.txt: `pip install -U pip; pip install -r requirements.txt`
-
 #### Executing the CLI
+
 Run `python cli.py` for a list of commands and helpful output.
 
 #### Testing the CLI
@@ -154,6 +148,7 @@ advance,2021-08-04,1500.00
 
 Find below the expected outputs after loading the events in a fresh database and running the `balances`
 command for the given dates:
+
 ```
 $ python cli.py balances 2021-07-20
 Advances:
@@ -198,6 +193,7 @@ Interest Payable Balance:                             0.27
 Total Interest Paid:                                 57.79
 Balance Applicable to Future Advances:                0.00
 ```
+
 See below for a **full example**:
 
 ```
@@ -240,7 +236,6 @@ $ python cli.py drop-db
 Deleted SQLite database at db.sqlite3
 ```
 
-
 ## Overall Criteria
 
 Your work will be judged on:
@@ -249,10 +244,5 @@ Your work will be judged on:
 - The ability for your code to achieve the functionality described above
 - The accuracy of your code against the unit test cases provided
 
-To be respectful of your time, you will not receive additional credit for implementing additional functionality not 
+To be respectful of your time, you will not receive additional credit for implementing additional functionality not
 provided in the design requirements above.
-
-## Submission
-
-You can provide your codebase in the form of a GitHub or GitLab repo and email the link to sagar.patel@getampla.com and 
-jie.zhou@getampla.com 
