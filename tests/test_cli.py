@@ -136,7 +136,6 @@ class CLITest(unittest.TestCase):
         """Test `balances` results against suite of correct output."""
         for test_filename, output_date, output in TEST_INPUTS:
             msg = f"Testing :: {test_filename} results of {output_date}"
-            print(msg)
             with self.runner.isolated_filesystem(temp_dir="/tmp"), self.subTest(
                 msg=msg, test_filename=test_filename, output_date=output_date, output=output
             ):

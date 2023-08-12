@@ -7,6 +7,8 @@ import os
 import sqlite3
 from typing import Dict
 
+from advance_stats import AdvanceStats
+
 
 @click.group()
 @click.option("--debug/--no-debug", default=False, help="Debug output, or no debug output.")
@@ -86,7 +88,6 @@ def load(ctx: Dict, filename: str) -> None:
 
     click.echo(f"Loaded {loaded} events from {filename}")
 
-
 @interface.command()
 @click.argument("end_date", required=False, type=click.STRING)
 @click.pass_context
@@ -103,6 +104,7 @@ def balances(ctx: Dict, end_date: str = None) -> None:
     overall_interest_payable_balance = Decimal(0)
     overall_interest_paid = Decimal(0)
     overall_payments_for_future = Decimal(0)
+    advance_stats = AdvanceStats()
 
     # query events from database example
     with sqlite3.connect(ctx.obj["DB_PATH"]) as connection:
@@ -110,14 +112,20 @@ def balances(ctx: Dict, end_date: str = None) -> None:
         result = cursor.execute("select * from events order by date_created asc;")
         events = result.fetchall()
         # TODO: FIXME Run interest calculation.
-
+        (
+            overall_advance_balance,
+            overall_interest_payable_balance,
+            overall_interest_paid,
+            overall_payments_for_future,
+        ) = advance_stats.get_advances_summary(events, end_date)
     click.echo("Advances:")
     click.echo("----------------------------------------------------------")
     # NOTE: This initial print adheres to the format spec.
     click.echo("{0:>10}{1:>11}{2:>17}{3:>20}".format("Identifier", "Date", "Initial Amt", "Current Balance"))
 
     # TODO: FIXME Print each advance row and relevant advance statistics
-
+    for index, advance in enumerate(advance_stats.advances, start=1):
+        click.echo("{0:>10}{1:>11}{2:>17}{3:>20}".format(index, advance.date, "{:.2f}".format(advance.initial_amount), "{:.2f}".format(advance.current_amount)))
     # print summary statistics
     # NOTE: These prints adhere to the format spec.
     click.echo("\nSummary Statistics:")
